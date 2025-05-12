@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Взгляд на Москву - Карта</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f5f7fa;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    body.loaded {
+      opacity: 1;
+    }
+
+    header, footer {
+      background-color: #3b8ad8;
+      color: white;
+      padding: 20px 40px;
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #ffe082;
+    }
+
+    .filters {
+      margin: 10px 20px;
+    }
+
+    .filters label {
+      margin-right: 20px;
+      font-weight: bold;
+    }
+
+    #map {
+      height: calc(100vh - 210px);
+      margin: 10px 20px;
+      border-radius: 10px;
+    }
+
+    .leaflet-control-attribution {
+      display: none;
+    }
+
+    footer {
+      text-align: center;
+    }
+
+    footer p {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    #toggleAllBtn {
+      padding: 8px 16px;
+      background-color: #3b8ad8;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 10px 20px;
+    }
+
+    #toggleAllBtn:hover {
+      background-color: #3474ba;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Карта</h1>
+  <nav>
+    <a href="index.html">Главная</a>
+    <a href="about.html">О нас</a>
+    <a href="contacts.html">Контакты</a>
+    <a href="destinations.html">Интерактив</a>
+    <a href="map.html">Карта</a>
+  </nav>
+</header>
+
+<div class="filters">
+  <label>
+    <input type="checkbox" id="toggleParks" checked>
+    <img src="https://cdn-icons-png.flaticon.com/512/206/206865.png" alt="Парк" width="20" style="vertical-align: middle;"> Парки
+  </label>
+  <label>
+    <input type="checkbox" id="toggleMuseums" checked>
+    <img src="https://cdn-icons-png.flaticon.com/512/684/684908.png" alt="Музей" width="20" style="vertical-align: middle;"> Музеи
+  </label>
+  <label>
+    <input type="checkbox" id="toggleLandmarks" checked>
+    <img src="https://cdn-icons-png.flaticon.com/512/1517/1517534.png" alt="Достопримечательность" width="20" style="vertical-align: middle;"> Достопримечательности
+  </label>
+</div>
+
+<div>
+  <button id="toggleAllBtn">Скрыть все метки</button>
+</div>
+
+<div id="map"></div>
+
+<footer>
+  <p>&copy; 2025 Взгляд на Москву | vzglad.moskvy@yandex.ru</p>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  window.onload = () => {
+    document.body.classList.add("loaded");
+  };
+
+  const map = L.map('map', {
+    center: [55.75, 37.62],
+    zoom: 10,
+    minZoom: 8,
+    maxZoom: 12,
+    maxBounds: [[54.5, 35.0], [56.5, 39.5]],
+    maxBoundsViscosity: 1.0
+  });
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '' }).addTo(map);
+
+  const parkIcon = L.icon({
+    iconUrl: 'https://cdn-icons-png.flaticon.com/512/206/206865.png',
+    iconSize: [32, 32], iconAnchor: [16, 32], popupAnchor: [0, -30]
+  });
+
+  const museumIcon = L.icon({
+    iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+    iconSize: [32, 32], iconAnchor: [16, 32], popupAnchor: [0, -30]
+  });
+
+  const landmarkIcon = L.icon({
+    iconUrl: 'https://cdn-icons-png.flaticon.com/512/1517/1517534.png',
+    iconSize: [32, 32], iconAnchor: [16, 32], popupAnchor: [0, -30]
+  });
+
+  const parksLayer = L.layerGroup().addTo(map);
+  const museumsLayer = L.layerGroup().addTo(map);
+  const landmarksLayer = L.layerGroup().addTo(map);
+
+  const parks = [
+    { name: "Парк Горького", coords: [55.7294, 37.6034] },
+    { name: "Сокольники", coords: [55.8002, 37.6782] },
+    { name: "Зарядье", coords: [55.7520, 37.6300] },
+    { name: "Царицыно", coords: [55.6134, 37.6724] },
+    { name: "Лосиный остров", coords: [55.8211, 37.7558] },
+    { name: "Аптекарский огород", coords: [55.7811, 37.6326] },
+    { name: "Кусково", coords: [55.7176, 37.8181] },
+    { name: "Парк 'Пехорка' (Балашиха)", coords: [55.8016, 37.9681] },
+    { name: "Парк 'Дубки' (Долгопрудный)", coords: [55.9355, 37.5137] }
+  ];
+
+  parks.forEach(p => {
+    L.marker(p.coords, { icon: parkIcon }).bindPopup(`<strong>${p.name}</strong><br>Зона отдыха`).addTo(parksLayer);
+  });
+
+  const museums = [
+    { name: "Третьяковская галерея", coords: [55.7414, 37.6202] },
+    { name: "Политехнический музей", coords: [55.7550, 37.6273] },
+    { name: "Пушкинский музей", coords: [55.7479, 37.6045] },
+    { name: "Музей Космонавтики", coords: [55.8210, 37.6399] },
+    { name: "Исторический музей", coords: [55.7557, 37.6178] },
+    { name: "Дом-музей Булгакова", coords: [55.7679, 37.5946] },
+    { name: "Музей-заповедник Абрамцево", coords: [56.1881, 37.6203] },
+    { name: "Музей техники Вадима Задорожного", coords: [55.7287, 36.8523] }
+  ];
+
+  museums.forEach(m => {
+    L.marker(m.coords, { icon: museumIcon }).bindPopup(`<strong>${m.name}</strong>`).addTo(museumsLayer);
+  });
+
+  const landmarks = [
+    { name: "Красная площадь", coords: [55.7539, 37.6208] },
+    { name: "Собор Василия Блаженного", coords: [55.7525, 37.6231] },
+    { name: "Новодевичий монастырь", coords: [55.7266, 37.5545] },
+    { name: "Останкинская башня", coords: [55.8198, 37.6111] },
+    { name: "Москва-Сити", coords: [55.7499, 37.5373] },
+    { name: "Большой театр", coords: [55.7601, 37.6187] },
+    { name: "Коломенское", coords: [55.6676, 37.6637] },
+    { name: "Усадьба Архангельское", coords: [55.7558, 37.3124] },
+    { name: "Сергиев Посад", coords: [56.3009, 38.1334] },
+    { name: "Кремль в Коломне", coords: [55.0970, 38.7749] }
+  ];
+
+  landmarks.forEach(l => {
+    L.marker(l.coords, { icon: landmarkIcon }).bindPopup(`<strong>${l.name}</strong>`).addTo(landmarksLayer);
+  });
+
+  document.getElementById('toggleParks').onchange = e => toggleLayer(e, parksLayer);
+  document.getElementById('toggleMuseums').onchange = e => toggleLayer(e, museumsLayer);
+  document.getElementById('toggleLandmarks').onchange = e => toggleLayer(e, landmarksLayer);
+
+  function toggleLayer(event, layer) {
+    event.target.checked ? map.addLayer(layer) : map.removeLayer(layer);
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const selectedCategory = params.get("category");
+
+  if (selectedCategory) {
+    if (selectedCategory !== 'парки') map.removeLayer(parksLayer);
+    if (selectedCategory !== 'музеи') map.removeLayer(museumsLayer);
+    if (selectedCategory !== 'достопримечательности') map.removeLayer(landmarksLayer);
+  }
+
+  let allVisible = true;
+
+  document.getElementById('toggleAllBtn').onclick = function () {
+    if (allVisible) {
+      map.removeLayer(parksLayer);
+      map.removeLayer(museumsLayer);
+      map.removeLayer(landmarksLayer);
+      document.getElementById('toggleParks').checked = false;
+      document.getElementById('toggleMuseums').checked = false;
+      document.getElementById('toggleLandmarks').checked = false;
+      this.textContent = 'Показать все метки';
+    } else {
+      map.addLayer(parksLayer);
+      map.addLayer(museumsLayer);
+      map.addLayer(landmarksLayer);
+      document.getElementById('toggleParks').checked = true;
+      document.getElementById('toggleMuseums').checked = true;
+      document.getElementById('toggleLandmarks').checked = true;
+      this.textContent = 'Скрыть все метки';
+    }
+    allVisible = !allVisible;
+  };
+</script>
+
+</body>
+</html>

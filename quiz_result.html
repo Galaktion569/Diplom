@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ваш результат — Взгляд на Москву</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f5f7fa;
+      margin: 0;
+      padding: 0;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    body.loaded {
+      opacity: 1;
+    }
+    .container {
+      max-width: 800px;
+      margin: 60px auto;
+      background: white;
+      padding: 40px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #2d5faa;
+      margin-bottom: 20px;
+    }
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 10px;
+      margin: 20px 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    p {
+      font-size: 18px;
+      color: #444;
+      margin-bottom: 30px;
+    }
+    .button {
+      display: inline-block;
+      background-color: #3b8ad8;
+      color: white;
+      padding: 12px 24px;
+      text-decoration: none;
+      border-radius: 5px;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+    .button:hover {
+      background-color: #3474ba;
+    }
+  </style>
+  <script>
+    window.onload = () => {
+      document.body.classList.add("loaded");
+    };
+  </script>
+</head>
+<body>
+
+<div class="container">
+  <h1 id="title">Ваш результат</h1>
+  <img id="image" src="" alt="Результат">
+  <p id="description"></p>
+  <a id="mapLink" href="map.html" class="button">Показать на карте</a>
+</div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const type = params.get("type");
+
+  const results = {
+    "парки": {
+      title: "Вы выбрали: Парки",
+      image: "https://cdn.pixabay.com/photo/2017/06/26/22/30/gorky-park-2440981_1280.jpg",
+      description: "Вам подойдут уютные парки Москвы: Царицыно, Сокольники, Парк Горького или Зарядье."
+    },
+    "музеи": {
+      title: "Вы выбрали: Музеи",
+      image: "https://cdn.pixabay.com/photo/2015/09/01/03/58/museum-916678_1280.jpg",
+      description: "Вам будет интересно посетить Третьяковскую галерею, Пушкинский музей или Музей Космонавтики."
+    },
+    "достопримечательности": {
+      title: "Вы выбрали: Достопримечательности",
+      image: "https://cdn.pixabay.com/photo/2021/03/02/12/20/st-basils-cathedral-6062885_1280.jpg",
+      description: "Начните с главных символов: Красная площадь, Храм Василия Блаженного, Москва-Сити и Останкинская башня."
+    }
+  };
+
+  if (type && results[type]) {
+    document.getElementById("title").textContent = results[type].title;
+    document.getElementById("image").src = results[type].image;
+    document.getElementById("description").textContent = results[type].description;
+    document.getElementById("mapLink").href = "map.html?category=" + encodeURIComponent(type);
+  } else {
+    document.getElementById("title").textContent = "Результат не определён";
+    document.getElementById("description").textContent = "Попробуйте пройти тест ещё раз.";
+    document.getElementById("mapLink").style.display = "none";
+  }
+</script>
+
+</body>
+</html>

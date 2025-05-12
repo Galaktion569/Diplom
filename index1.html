@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Взгляд на Москву — Главная</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f5f7fa;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    body.loaded {
+      opacity: 1;
+    }
+
+    header, footer {
+      background-color: #3b8ad8;
+      color: white;
+      padding: 20px 40px;
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    nav a {
+      color: white;
+      margin: 0 10px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #ffe082;
+    }
+
+    .hero {
+      background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+                  url('https://upload.wikimedia.org/wikipedia/commons/7/7b/Moscow_Kremlin_and_Moskva_River.jpg') no-repeat center center/cover;
+      color: white;
+      text-align: center;
+      padding: 120px 20px;
+    }
+
+    .hero h2 {
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+
+    .hero p {
+      font-size: 18px;
+    }
+
+    .section {
+      padding: 60px 20px;
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    h2 {
+      color: #2d5faa;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .cards {
+      display: flex;
+      gap: 30px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      width: 320px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+    }
+
+    .card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .card-content {
+      padding: 20px;
+    }
+
+    .card-content h3 {
+      margin-top: 0;
+      color: #2d5faa;
+    }
+
+    .card-content p {
+      font-size: 14px;
+      color: #080808;
+    }
+
+    footer {
+      text-align: center;
+    }
+
+    footer p {
+      margin: 0;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Взгляд на Москву</h1>
+  <nav>
+    <a href="#">Главная</a>
+    <a href="destinations.html">Интерактив</a>
+    <a href="about.html">О нас</a>
+    <a href="contacts.html">Контакты</a>
+    <a href="map.html">Карта</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <h2>Исследуйте Москву с нами</h2>
+  <p>Узнайте, где самые интересные места столицы — парки, музеи и достопримечательности</p>
+</div>
+
+<section class="section" id="destinations">
+  <h2>Популярные места</h2>
+  <div class="cards">
+    <div class="card">
+      <img src="images/ostankino.jpg" alt="Останкинская телебашня">
+      <div class="card-content">
+        <h3>Останкинская телебашня</h3>
+        <p>Знаковый символ Москвы и одна из самых высоких телебашен в мире — 540 метров. Отличное место для тех, кто хочет увидеть Москву с высоты птичьего полёта.</p>
+      </div>
+    </div>
+    <div class="card">
+      <img src="images/tretyakov.jpg" alt="Третьяковская галерея">
+      <div class="card-content">
+        <h3>Третьяковская галерея</h3>
+        <p>Один из важнейших художественных музеев России, основанный в XIX веке купцом Павлом Третьяковым. В коллекции — шедевры русской живописи, включая работы Репина и Айвазовского.</p>
+      </div>
+    </div>
+    <div class="card">
+      <img src="images/gorky-park.jpeg" alt="Парк Горького">
+      <div class="card-content">
+        <h3>Парк Горького</h3>
+        <p>Современное общественное пространство с обширной территорией для прогулок, спорта и отдыха. Здесь можно посетить различные выставки и насладиться атмосферой живого города.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="about">
+  <h2>О нас</h2>
+  <p style="max-width: 800px; margin: auto; font-size: 16px;">
+    Впервые в Москве? Мы подскажем, с чего начать. Лучшие места уже отмечены на карте: парки, музеи и достопримечательности ждут тебя!
+  </p>
+</section>
+
+<footer>
+  <p>&copy; 2025 Взгляд на Москву | vzglad.moskvy@yandex.ru</p>
+</footer>
+
+<script>
+  window.onload = () => {
+    document.body.classList.add("loaded");
+  };
+</script>
+
+</body>
+</html>

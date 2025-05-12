@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Взгляд на Москву — О нас</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f5f7fa;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    body.loaded {
+      opacity: 1;
+    }
+
+    header, footer {
+      background-color: #3b8ad8;
+      color: white;
+      padding: 20px 40px;
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #ffe082;
+    }
+
+    .content {
+      max-width: 900px;
+      margin: 60px auto;
+      background: white;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+    h1, h2 {
+      color: #2d5faa;
+      margin-top: 0;
+    }
+
+    ul {
+      padding-left: 20px;
+      line-height: 1.6;
+    }
+
+    .back-link {
+      margin-bottom: 20px;
+    }
+
+    .back-link a {
+      color: #3b8ad8;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .back-link a:hover {
+      text-decoration: underline;
+    }
+
+    footer {
+      text-align: center;
+    }
+
+    footer p {
+      margin: 0;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>О нас</h1>
+  <nav>
+    <a href="index.html">Главная</a>
+    <a href="about.html">О нас</a>
+    <a href="contacts.html">Контакты</a>
+    <a href="map.html">Карта</a>
+    <a href="destinations.html">Интерактив</a>
+  </nav>
+</header>
+
+<div class="content">
+  <div class="back-link">
+    <a href="index.html">← На главную</a>
+  </div>
+
+  <h2>Кто мы</h2>
+  <p><strong>«Взгляд на Москву»</strong> — это путеводитель по самым интересным местам столицы и области. Мы собрали на одной карте парки, музеи и достопримечательности, чтобы каждый мог увидеть Москву по-своему — живой, вдохновляющей и удивляющей на каждом шагу.</p>
+
+  <h2>Что мы предлагаем</h2>
+  <ul>
+    <li>Интерактивную карту с отмеченными парками, музеями и достопримечательностями Москвы и области;</li>
+    <li>Описание и фото достопримечательностей, парков и музеев;</li>
+    <li>Возможность построить маршрут с несколькими остановками;</li>
+    <li>Фото и краткая справка о каждом месте.</li>
+  </ul>
+
+  <h2>Наша задача</h2>
+  <p>Помочь вам увидеть Москву яркой, насыщенной и доступной. Мы упрощаем поиск интересных локаций и превращаем каждую прогулку в маленькое путешествие.</p>
+</div>
+
+<footer>
+  <p>&copy; 2025 Взгляд на Москву | vzglad.moskvy@yandex.ru</p>
+</footer>
+
+<script>
+  window.onload = () => {
+    document.body.classList.add("loaded");
+  };
+</script>
+
+</body>
+</html>
