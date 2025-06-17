@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Профиль — Взгляд на Москву</title>
+  <link rel="icon" type="image/png" href="images/favicon.ico">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    body.fade-page.visible {
+      opacity: 1;
+    }
+
+    header, footer {
+      background-color: #1a1a1a;
+      color: white;
+      padding: 20px 40px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    nav {
+      display: flex;
+      gap: 15px;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 14px;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #ff4d4d;
+    }
+
+    .hero {
+      position: relative;
+      height: 60vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url("images/glavnaya.jpg") no-repeat center center/cover;
+      filter: brightness(0.4);
+      z-index: 1;
+    }
+
+    .hero h1 {
+      position: relative;
+      z-index: 2;
+      font-size: 48px;
+      color: white;
+      margin: 0;
+    }
+
+    .content {
+      max-width: 700px;
+      margin: 40px auto;
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      line-height: 1.6;
+    }
+
+    .avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background-color: #ccc;
+      margin: 0 auto 20px;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .profile-name {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 5px;
+      text-align: center;
+    }
+
+    .profile-login {
+      font-size: 16px;
+      color: #777;
+      text-align: center;
+    }
+
+    .profile-meta {
+      text-align: center;
+      font-size: 14px;
+      margin-top: 10px;
+      color: #555;
+    }
+
+    .edit-btn {
+      margin: 20px auto;
+      display: block;
+      padding: 8px 16px;
+      font-size: 14px;
+      background-color: #3b8ad8;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .edit-btn:hover {
+      background-color: #2e73b0;
+    }
+
+    .content h2 {
+      color: #3b8ad8;
+      margin-top: 30px;
+    }
+
+    .info-block p {
+      margin: 10px 0;
+      font-size: 16px;
+    }
+
+    .tag {
+      display: inline-block;
+      background-color: #e0f0ff;
+      color: #2a6496;
+      padding: 6px 12px;
+      border-radius: 20px;
+      margin: 5px 5px 10px 0;
+      font-size: 14px;
+    }
+
+    .tag button {
+      background: none;
+      border: none;
+      margin-left: 6px;
+      color: #f44336;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .tag-form select, .tag-form button {
+      width: 100%;
+      padding: 10px;
+      font-size: 14px;
+      margin-top: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .tag-form button {
+      background-color: #3b8ad8;
+      color: white;
+      border: none;
+    }
+
+    .tag-form button:hover {
+      background-color: #2e73b0;
+    }
+
+    .quick-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 15px;
+    }
+
+    .action-btn {
+      text-decoration: none;
+      padding: 10px 18px;
+      background-color: #e3f2fd;
+      border: 1px solid #90caf9;
+      border-radius: 8px;
+      color: #1976d2;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: inline-block;
+    }
+
+    .action-btn:hover {
+      background-color: #bbdefb;
+      border-color: #64b5f6;
+      color: #0d47a1;
+    }
+
+    footer {
+      text-align: center;
+    }
+
+    footer p {
+      margin: 0;
+      font-size: 14px;
+      color: #aaa;
+    }
+  </style>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      document.body.classList.add("fade-page");
+      setTimeout(() => document.body.classList.add("visible"), 10);
+
+      document.querySelectorAll("a[href]").forEach(link => {
+        const url = new URL(link.href, window.location.origin);
+        if (url.origin === window.location.origin) {
+          link.addEventListener("click", function (e) {
+            e.preventDefault();
+            document.body.classList.remove("visible");
+            setTimeout(() => {
+              window.location.href = this.href;
+            }, 150);
+          });
+        }
+      });
+    });
+  </script>
+</head>
+<body>
+
+<header>
+  <div class="logo">Взгляд на Москву</div>
+  <nav>
+    <a href="index.html">Главная</a>
+    <a href="about.html">О нас</a>
+    <a href="map.html">Карта</a>
+    <a href="destinations.html">Интерактив</a>
+    <a href="my_route.html">Мой маршрут</a>
+    <a href="contacts.html">Контакты</a>
+    <a href="auth.html">Авторизация</a>
+    <a href="profile.html">Профиль</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <h1>Мой профиль</h1>
+</section>
+
+<section class="content">
+  <div class="avatar" id="avatarDisplay"></div>
+  <div class="profile-name" id="profile-name">Имя пользователя</div>
+  <div class="profile-login" id="profile-login">@username</div>
+  <div class="profile-meta" id="profile-gender">Пол: не указан</div>
+  <div class="profile-meta" id="profile-birthdate">Дата рождения: не указана</div>
+  <button class="edit-btn" onclick="location.href='edit_profile.html'">Редактировать профиль</button>
+
+  <h2>Информация</h2>
+  <p><strong>Последний вход:</strong> 15 мая 2025</p>
+  <p><strong>Добавлено мест в маршрут:</strong> <span id="route-count">0</span> из 10</p>
+
+  <h2>Ваши теги интересов</h2>
+  <div id="tagList"></div>
+  <form class="tag-form" onsubmit="addTag(event)">
+    <select id="tagSelect">
+      <option value="">Выберите тег</option>
+      <option value="Парки">🏞 Парки</option>
+      <option value="Музеи">🖼 Музеи</option>
+      <option value="История">📜 История</option>
+      <option value="Архитектура">🏛 Архитектура</option>
+      <option value="Фото">📷 Фото</option>
+      <option value="Маршруты выходного дня">🚶 Маршруты выходного дня</option>
+    </select>
+    <button type="submit">Добавить</button>
+  </form>
+
+  <h2>Быстрые действия</h2>
+  <div class="quick-actions">
+    <a href="my_route.html" class="action-btn">Перейти к маршрутам</a>
+    <a href="destinations.html" class="action-btn">Пройти тест заново</a>
+    <a href="#" class="action-btn" onclick="logout()">Выйти из аккаунта</a>
+  </div>
+</section>
+
+<footer>
+  <p>&copy; 2025 Взгляд на Москву | vzglad.moskvy@yandex.ru</p>
+</footer>
+
+<script>
+  const user = JSON.parse(localStorage.getItem("user")) || { username: "guest" };
+  const nameField = document.getElementById("profile-name");
+  const loginField = document.getElementById("profile-login");
+  const genderField = document.getElementById("profile-gender");
+  const birthdateField = document.getElementById("profile-birthdate");
+  const routeCount = document.getElementById("route-count");
+  const tagList = document.getElementById("tagList");
+  const avatarDisplay = document.getElementById("avatarDisplay");
+
+  function renderProfile() {
+    nameField.textContent = user.name || "Имя не указано";
+    loginField.textContent = "@" + (user.username || "guest");
+    genderField.textContent = "Пол: " + (user.gender || "не указан");
+    birthdateField.textContent = "Дата рождения: " + (user.birthdate || "не указана");
+
+    const routeKey = user && user.username ? `route_${user.username}` : null;
+    const routeData = routeKey ? JSON.parse(localStorage.getItem(routeKey)) || [] : [];
+    routeCount.textContent = routeData.length;
+
+    const tagKey = user && user.username ? `tags_${user.username}` : "userTags";
+    const tags = JSON.parse(localStorage.getItem(tagKey)) || [];
+    tagList.innerHTML = "";
+    tags.slice(0, 3).forEach((tag, index) => {
+      const span = document.createElement("span");
+      span.className = "tag";
+      span.innerHTML = `${tag} <button onclick="removeTag(${index})">×</button>`;
+      tagList.appendChild(span);
+    });
+
+    const defaultAvatar = 'images/avatar-placeholder.png';
+    avatarDisplay.style.backgroundImage = `url('${user.avatar || defaultAvatar}')`;
+  }
+
+  function addTag(event) {
+    event.preventDefault();
+    const select = document.getElementById("tagSelect");
+    const value = select.value;
+    if (!value) return;
+
+    const tagKey = user && user.username ? `tags_${user.username}` : "userTags";
+    let tags = JSON.parse(localStorage.getItem(tagKey)) || [];
+    if (tags.includes(value)) return;
+    if (tags.length >= 3) {
+      alert("Можно выбрать не более 3 тегов.");
+      return;
+    }
+
+    tags.push(value);
+    localStorage.setItem(tagKey, JSON.stringify(tags));
+    select.value = "";
+    renderProfile();
+  }
+
+  function removeTag(index) {
+    const tagKey = user && user.username ? `tags_${user.username}` : "userTags";
+    let tags = JSON.parse(localStorage.getItem(tagKey)) || [];
+    tags.splice(index, 1);
+    localStorage.setItem(tagKey, JSON.stringify(tags));
+    renderProfile();
+  }
+
+  function logout() {
+    localStorage.removeItem("user");
+    alert("Вы вышли из аккаунта.");
+    window.location.href = "auth.html";
+  }
+
+  renderProfile();
+</script>
+
+</body>
+</html>

@@ -3,89 +3,132 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Взгляд на Москву - Интерактив</title>
+  <title>Интерактив — Взгляд на Москву</title>
+  <link rel="icon" type="image/png" href="images/favicon.ico">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;700&display=swap" rel="stylesheet">
   <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      font-family: 'Roboto', sans-serif;
-      background-color: #f5f7fa;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f5f5f5;
       color: #333;
-      margin: 0;
-      padding: 0;
       opacity: 0;
-      transition: opacity 0.5s ease;
+      transition: opacity 0.2s ease;
     }
-    body.loaded {
+
+    body.fade-page.visible {
       opacity: 1;
     }
 
     header, footer {
-      background-color: #3b8ad8;
+      background-color: #1a1a1a;
       color: white;
       padding: 20px 40px;
     }
 
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-weight: bold;
+      font-size: 18px;
+    }
+
     nav {
       display: flex;
-      flex-wrap: wrap;
       gap: 15px;
     }
 
     nav a {
       color: white;
       text-decoration: none;
-      font-weight: bold;
+      font-weight: 500;
+      font-size: 14px;
       transition: color 0.3s;
     }
 
     nav a:hover {
-      color: #ffe082;
+      color: #ff4d4d;
+    }
+
+    .hero {
+      position: relative;
+      height: 60vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url("images/glavnaya.jpg") no-repeat center center/cover;
+      filter: brightness(0.4);
+      z-index: 1;
+    }
+
+    .hero h1 {
+      position: relative;
+      z-index: 2;
+      font-size: 48px;
+      color: white;
+      margin: 0;
     }
 
     .content {
-      max-width: 1000px;
-      margin: 60px auto;
+      max-width: 700px;
+      margin: 40px auto;
       background: white;
       padding: 40px;
-      border-radius: 10px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-    }
-
-    h1, h2 {
-      color: #2d5faa;
-      margin-top: 0;
-    }
-
-    form {
-      font-size: 16px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
       line-height: 1.6;
     }
 
-    form label {
-      display: block;
+    .content h2 {
+      color: #3b8ad8;
+      margin-bottom: 20px;
+    }
+
+    .content p {
       margin-bottom: 10px;
     }
 
-    form button {
-      background-color: #3b8ad8;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
+    label {
+      display: block;
+      margin: 6px 0;
       cursor: pointer;
     }
 
-    form button:hover {
-      background-color: #3474ba;
+    input[type="radio"] {
+      margin-right: 6px;
     }
 
-    #result {
+    button {
+      background-color: #3b8ad8;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 15px;
       margin-top: 20px;
-      font-size: 18px;
-      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #2f78bd;
     }
 
     footer {
@@ -95,120 +138,159 @@
     footer p {
       margin: 0;
       font-size: 14px;
+      color: #aaa;
+    }
+
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      nav {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        margin-top: 10px;
+      }
+
+      .hero h1 {
+        font-size: 36px;
+      }
+
+      .content {
+        padding: 20px;
+      }
     }
   </style>
+
   <script>
-    window.onload = () => {
-      document.body.classList.add("loaded");
-    };
+    document.addEventListener("DOMContentLoaded", () => {
+      document.body.classList.add("fade-page");
+      setTimeout(() => document.body.classList.add("visible"), 10);
+
+      document.querySelectorAll("a[href]").forEach(link => {
+        const url = new URL(link.href, window.location.origin);
+        if (url.origin === window.location.origin) {
+          link.addEventListener("click", function (e) {
+            e.preventDefault();
+            document.body.classList.remove("visible");
+            setTimeout(() => {
+              window.location.href = this.href;
+            }, 150);
+          });
+        }
+      });
+    });
+
+    function showResult() {
+      const form = document.forms['quizForm'];
+      const answers = [];
+      for (let i = 1; i <= 10; i++) {
+        const selected = form['q' + i];
+        if (!selected || !selected.value) {
+          alert("Пожалуйста, ответьте на все вопросы.");
+          return;
+        }
+        answers.push(selected.value);
+      }
+
+      const count = { "парки": 0, "музеи": 0, "достопримечательности": 0 };
+      answers.forEach(answer => count[answer]++);
+
+      let max = 0;
+      let result = '';
+      for (let key in count) {
+        if (count[key] > max) {
+          max = count[key];
+          result = key;
+        }
+      }
+
+      document.body.classList.remove("visible");
+      setTimeout(() => {
+        window.location.href = 'quiz_result.html?type=' + encodeURIComponent(result);
+      }, 150);
+    }
   </script>
 </head>
 <body>
 
 <header>
-  <h1>Интерактив</h1>
+  <div class="logo">Взгляд на Москву</div>
   <nav>
     <a href="index.html">Главная</a>
     <a href="about.html">О нас</a>
-    <a href="contacts.html">Контакты</a>
-    <a href="destinations.html">Интерактив</a>
     <a href="map.html">Карта</a>
+    <a href="destinations.html">Интерактив</a>
+    <a href="my_route.html">Мой маршрут</a>
+    <a href="contacts.html">Контакты</a>
+    <a href="auth.html">Авторизация</a>
+    <a href="profile.html">Профиль</a>
   </nav>
 </header>
 
-<div class="content">
+<section class="hero">
+  <h1>Интерактивный тест</h1>
+</section>
+
+<section class="content">
   <h2>Куда поехать в Москве?</h2>
   <p>Ответьте на вопросы, и мы подскажем, что вам стоит посетить в первую очередь!</p>
 
   <form id="quizForm">
-    
-    <p><strong>1. Что вам ближе?</strong></p>
-    <label><input type="radio" name="q1" value="парки"> Прогулки на свежем воздухе</label><br>
-    <label><input type="radio" name="q1" value="музеи"> Спокойствие и тишина</label><br>
-    <label><input type="radio" name="q1" value="достопримечательности"> История и архитектура</label><br><br>
-    
+       <p><strong>1. Что вам ближе?</strong></p>
+    <label><input type="radio" name="q1" value="парки"> Прогулки на свежем воздухе</label>
+    <label><input type="radio" name="q1" value="музеи"> Спокойствие и тишина</label>
+    <label><input type="radio" name="q1" value="достопримечательности"> История и архитектура</label>
+
     <p><strong>2. Чем вы хотели бы заняться?</strong></p>
-    <label><input type="radio" name="q2" value="парки"> Насладиться природой и неспешной прогулкой на велосипеде</label><br>
-    <label><input type="radio" name="q2" value="музеи"> Рассмотреть картины и прочитать об истории их создания</label><br>
-    <label><input type="radio" name="q2" value="достопримечательности">  Сделать фотографии с Кремлём </label><br><br>
+    <label><input type="radio" name="q2" value="парки"> Прогулка или велосипед</label>
+    <label><input type="radio" name="q2" value="музеи"> Искусство и история</label>
+    <label><input type="radio" name="q2" value="достопримечательности"> Фотографии с Кремлём</label>
 
     <p><strong>3. Какая атмосфера вам ближе?</strong></p>
-    <label><input type="radio" name="q3" value="парки"> Спокойствие природы и лёгкий ветерок</label><br>
-    <label><input type="radio" name="q3" value="музеи"> Тишина залов, полных истории</label><br>
-    <label><input type="radio" name="q3" value="достопримечательности">Энергия большого города</label><br><br>
+    <label><input type="radio" name="q3" value="парки"> Природа и покой</label>
+    <label><input type="radio" name="q3" value="музеи"> Тишина залов</label>
+    <label><input type="radio" name="q3" value="достопримечательности"> Энергия города</label>
 
-    <p><strong>4. Где бы вы хотели провести свое свободное время?</strong></p>
-    <label><input type="radio" name="q4" value="парки"> В уютном уголке парка</label><br>
-    <label><input type="radio" name="q4" value="музеи"> В музейном зале, полном истории</label><br>
-    <label><input type="radio" name="q4" value="достопримечательности"> На оживлённой площади у главного фонтана города</label><br><br>
+    <p><strong>4. Где бы вы хотели провести своё время?</strong></p>
+    <label><input type="radio" name="q4" value="парки"> В парке</label>
+    <label><input type="radio" name="q4" value="музеи"> В музее</label>
+    <label><input type="radio" name="q4" value="достопримечательности"> На площади</label>
 
-    <p><strong>5. Какой сувенир вы хотели бы купить?</strong></p>
-    <label><input type="radio" name="q5" value="парки"> Фотокарточка с пейзажем любимого парка</label><br>
-    <label><input type="radio" name="q5" value="музеи"> Значок с символом искусства</label><br>
-    <label><input type="radio" name="q5" value="достопримечательности">Магнитик с изображением Кремля</label><br><br>
+    <p><strong>5. Какой сувенир вам ближе?</strong></p>
+    <label><input type="radio" name="q5" value="парки"> Фото с природой</label>
+    <label><input type="radio" name="q5" value="музеи"> Значок искусства</label>
+    <label><input type="radio" name="q5" value="достопримечательности"> Магнитик с Кремлём</label>
 
-    <p><strong>6. С кем вы обычно ходите гулять?</strong></p>
-    <label><input type="radio" name="q6" value="парки"> С друзьями</label><br>
-    <label><input type="radio" name="q6" value="музеи"> Один или с теми, кто ценит искусство</label><br>
-    <label><input type="radio" name="q6" value="достопримечательности"> С семьёй</label><br><br>
+    <p><strong>6. С кем вы гуляете?</strong></p>
+    <label><input type="radio" name="q6" value="парки"> С друзьями</label>
+    <label><input type="radio" name="q6" value="музеи"> С единомышленниками</label>
+    <label><input type="radio" name="q6" value="достопримечательности"> С семьёй</label>
 
-    <p><strong>7. Что бы вы хотели почувствовать?</strong></p>
-    <label><input type="radio" name="q7" value="парки"> Свободу и простор</label><br>
-    <label><input type="radio" name="q7" value="музеи"> Вдохновение и покой</label><br>
-    <label><input type="radio" name="q7" value="достопримечательности"> Восторг и масштаб</label><br><br>
+    <p><strong>7. Что вы хотите почувствовать?</strong></p>
+    <label><input type="radio" name="q7" value="парки"> Свободу</label>
+    <label><input type="radio" name="q7" value="музеи"> Вдохновение</label>
+    <label><input type="radio" name="q7" value="достопримечательности"> Восторг</label>
 
-    <p><strong>8. Что вы точно хотели бы увидеть?</strong></p>
-    <label><input type="radio" name="q8" value="парки"> Озеро, лужайку или мостик</label><br>
-    <label><input type="radio" name="q8" value="музеи"> Шедевры русской или мировой культуры</label><br>
-    <label><input type="radio" name="q8" value="достопримечательности"> Красную площадь, башни, храмы</label><br><br>
+    <p><strong>8. Что вы хотите увидеть?</strong></p>
+    <label><input type="radio" name="q8" value="парки"> Озеро или лужайку</label>
+    <label><input type="radio" name="q8" value="музеи"> Картины и артефакты</label>
+    <label><input type="radio" name="q8" value="достопримечательности"> Башни и храмы</label>
 
-    <p><strong>9. Какие фото вы хотели бы сделать?</strong></p>
-    <label><input type="radio" name="q9" value="парки"> Природа, закаты и атмосфера</label><br>
-    <label><input type="radio" name="q9" value="музеи"> Детали, картины, интерьер</label><br>
-    <label><input type="radio" name="q9" value="достопримечательности"> Панорамы города, символы Москвы</label><br><br>
+    <p><strong>9. Какие фото вы хотите сделать?</strong></p>
+    <label><input type="radio" name="q9" value="парки"> Закаты и листья</label>
+    <label><input type="radio" name="q9" value="музеи"> Интерьер музея</label>
+    <label><input type="radio" name="q9" value="достопримечательности"> Красная площадь</label>
 
-    <p><strong>10. Что останется в памяти после такого дня?</strong></p>
-    <label><input type="radio" name="q10" value="парки"> Свежий воздух, зелень вокруг и ни одной тревожной мысли</label><br>
-    <label><input type="radio" name="q10" value="музеи">Словно встретился с чем-то очень личным, но универсальным</label><br>
-    <label><input type="radio" name="q10" value="достопримечательности"> Кадры, которые теперь навсегда в моей памяти</label><br><br>
-
-
-    
+    <p><strong>10. Что останется в памяти?</strong></p>
+    <label><input type="radio" name="q10" value="парки"> Свежий воздух</label>
+    <label><input type="radio" name="q10" value="музеи"> Вдохновляющее спокойствие</label>
+    <label><input type="radio" name="q10" value="достопримечательности"> Грандиозные кадры</label>
 
     <button type="button" onclick="showResult()">Узнать результат</button>
   </form>
-
-  <div id="result"></div>
-</div>
-
-<script>
-  function showResult() {
-    const form = document.forms['quizForm'];
-    const answers = [];
-    for (let i = 1; i <= 10; i++) {
-      const selected = form['q' + i];
-      if (!selected || !selected.value) {
-        alert("Пожалуйста, ответьте на все вопросы.");
-        return;
-      }
-      answers.push(selected.value);
-    }
-
-    const count = { "парки": 0, "музеи": 0, "достопримечательности": 0 };
-    answers.forEach(answer => count[answer]++);
-
-    let max = 0;
-    let result = '';
-    for (let key in count) {
-      if (count[key] > max) {
-        max = count[key];
-        result = key;
-      }
-    }
-
-    window.location.href = 'quiz_result.html?type=' + encodeURIComponent(result);
-  }
-</script>
+</section>
 
 <footer>
   <p>&copy; 2025 Взгляд на Москву | vzglad.moskvy@yandex.ru</p>

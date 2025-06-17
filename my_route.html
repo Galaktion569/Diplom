@@ -2,11 +2,15 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Контакты — Взгляд на Москву</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Мой маршрут — Взгляд на Москву</title>
   <link rel="icon" type="image/png" href="images/favicon.ico">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -96,48 +100,59 @@
 
     .content h2 {
       color: #3b8ad8;
-      margin-top: 0;
-    }
-
-    .content p {
       margin-bottom: 20px;
-      font-size: 16px;
     }
 
-    .content .icon {
-      margin-right: 10px;
-      font-size: 18px;
-      color: #3b8ad8;
+    ul {
+      list-style: none;
+      padding: 0;
     }
 
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 500;
+    li {
+      background: #f9f9f9;
+      margin-bottom: 12px;
+      padding: 15px 20px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     }
 
-    input, textarea {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 20px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-family: inherit;
-      font-size: 15px;
+    li.done {
+      text-decoration: line-through;
+      color: #999;
+      background: #e0f2f1;
+    }
+
+    .route-buttons {
+      display: flex;
+      gap: 8px;
     }
 
     button {
-      background-color: #3b8ad8;
-      color: white;
-      padding: 12px 24px;
+      padding: 6px 12px;
+      font-size: 14px;
       border: none;
-      border-radius: 6px;
+      border-radius: 5px;
       cursor: pointer;
-      font-size: 15px;
     }
 
-    button:hover {
-      background-color: #2f78bd;
+    .done-btn {
+      background-color: #4caf50;
+      color: white;
+    }
+
+    .remove-btn {
+      background-color: #f44336;
+      color: white;
+    }
+
+    .empty {
+      text-align: center;
+      color: #888;
+      margin-top: 20px;
+      font-size: 16px;
     }
 
     footer {
@@ -209,31 +224,13 @@
 </header>
 
 <section class="hero">
-  <h1>Свяжитесь с нами</h1>
+  <h1>Мой маршрут</h1>
 </section>
 
 <section class="content">
-  <h2>Контактная информация</h2>
-  <p><span class="icon">📧</span><strong>Email:</strong> vzglad.moskvy@yandex.ru</p>
-  <p><span class="icon">📞</span><strong>Телефон:</strong> +7 (977) 142-74-90</p>
-  <p><span class="icon">📍</span><strong>Адрес:</strong> г. Москва, ул. Примерная, д. 1</p>
-  <p>Мы стараемся отвечать в течение одного рабочего дня. Для срочной связи — звоните нам напрямую.</p>
-
-  <h2>Форма обратной связи</h2>
-  <form action="https://formspree.io/f/mvgaonoa" method="post">
-    <input type="hidden" name="_captcha" value="false">
-
-    <label for="name">Ваше имя</label>
-    <input type="text" id="name" name="name" placeholder="Имя" required>
-
-    <label for="email">Ваш email</label>
-    <input type="email" id="email" name="email" placeholder="example@email.com" required>
-
-    <label for="message">Сообщение</label>
-    <textarea id="message" name="message" rows="5" placeholder="Ваше сообщение..." required></textarea>
-
-    <button type="submit">Отправить</button>
-  </form>
+  <h2>Список мест</h2>
+  <ul id="route-list"></ul>
+  <p class="empty" id="empty-text">Вы пока не добавили ни одного места.</p>
 </section>
 
 <footer>
@@ -241,28 +238,50 @@
 </footer>
 
 <script>
-  document.querySelector("form").addEventListener("submit", function (e) {
-    e.preventDefault();
+  const listElement = document.getElementById('route-list');
+  const emptyText = document.getElementById('empty-text');
 
-    const form = this;
+  function renderRoute() {
+    listElement.innerHTML = '';
+    const user = JSON.parse(localStorage.getItem("user"));
+    const routeKey = user && user.username ? `route_${user.username}` : null;
+    const data = routeKey ? JSON.parse(localStorage.getItem(routeKey)) || [] : [];
 
-    fetch(form.action, {
-      method: "POST",
-      body: new FormData(form),
-      headers: {
-        'Accept': 'application/json'
-      }
-    }).then(response => {
-      if (response.ok) {
-        alert("Сообщение отправлено!");
-        form.reset();
-      } else {
-        alert("Произошла ошибка. Пожалуйста, попробуйте ещё раз.");
-      }
-    }).catch(() => {
-      alert("Ошибка подключения. Попробуйте позже.");
+    if (data.length === 0) {
+      emptyText.style.display = 'block';
+    } else {
+      emptyText.style.display = 'none';
+    }
+
+    data.forEach((place, index) => {
+      const li = document.createElement('li');
+      if (place.done) li.classList.add('done');
+
+      li.innerHTML = `
+        <span>${place.name}</span>
+        <div class="route-buttons">
+          <button class="done-btn">${place.done ? 'Отменить' : 'Пройдено'}</button>
+          <button class="remove-btn">Удалить</button>
+        </div>
+      `;
+
+      li.querySelector('.done-btn').onclick = () => {
+        data[index].done = !data[index].done;
+        localStorage.setItem(routeKey, JSON.stringify(data));
+        renderRoute();
+      };
+
+      li.querySelector('.remove-btn').onclick = () => {
+        data.splice(index, 1);
+        localStorage.setItem(routeKey, JSON.stringify(data));
+        renderRoute();
+      };
+
+      listElement.appendChild(li);
     });
-  });
+  }
+
+  renderRoute();
 </script>
 
 </body>
